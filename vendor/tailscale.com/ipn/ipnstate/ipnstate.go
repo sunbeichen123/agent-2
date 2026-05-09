@@ -1,4 +1,4 @@
-// Copyright (c) Tailscale Inc & AUTHORS
+// Copyright (c) Tailscale Inc & contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
 // Package ipnstate captures the entire state of the Tailscale network.
@@ -20,7 +20,6 @@ import (
 	"tailscale.com/tailcfg"
 	"tailscale.com/tka"
 	"tailscale.com/types/key"
-	"tailscale.com/types/ptr"
 	"tailscale.com/types/views"
 	"tailscale.com/util/dnsname"
 	"tailscale.com/version"
@@ -89,6 +88,7 @@ type Status struct {
 
 // TKAKey describes a key trusted by network lock.
 type TKAKey struct {
+	Kind     string
 	Key      key.NLPublic
 	Metadata map[string]string
 	Votes    uint
@@ -534,7 +534,7 @@ func (sb *StatusBuilder) AddPeer(peer key.NodePublic, st *PeerStatus) {
 		e.Expired = true
 	}
 	if t := st.KeyExpiry; t != nil {
-		e.KeyExpiry = ptr.To(*t)
+		e.KeyExpiry = new(*t)
 	}
 	if v := st.CapMap; v != nil {
 		e.CapMap = v
