@@ -1,0 +1,18 @@
+D:\sliver\rest_api_gateway.py:398: SyntaxWarning: invalid escape sequence '\.'
+  1. reg - 注册表持久化: 使用 registry write 写入 HKCU\...\Run 键
+[*] 启动 REST API 网关 (端口 5000)...
+[*] 访问 http://127.0.0.1:5000/ 打开管理面板
+[*] 热重载已启用：修改代码后自动重启，无需手动操作
+ * Serving Flask app 'rest_api_gateway'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://198.18.0.1:5000
+Press CTRL+C to quit
+ * Restarting with stat
+D:\sliver\rest_api_gateway.py:398: SyntaxWarning: invalid escape sequence '\.'
+  1. reg - 注册表持久化: 使用 registry write 写入 HKCU\...\Run 键
+ * Debugger is active!
+ * Debugger PIN: 848-808-237
+127.0.0.1 - - [09/May/2026 11:52:39] "POST /api/v1/persist HTTP/1.1" 200 -

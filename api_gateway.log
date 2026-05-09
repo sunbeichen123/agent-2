@@ -1,0 +1,4 @@
+[*] 启动 REST API 网关 (端口 5000)...
+[*] 访问 http://127.0.0.1:5000/ 打开管理面板
+ * Serving Flask app 'rest_api_gateway'
+ * Debug mode: on

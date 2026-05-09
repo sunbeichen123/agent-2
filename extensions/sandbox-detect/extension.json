@@ -1,0 +1,25 @@
+{
+    "name": "sandbox-detect",
+    "version": "1.0.0",
+    "extension_author": "Sliver",
+    "original_author": "Al-Khaser",
+    "repo_url": "https://github.com/LordNoteworthy/al-khaser",
+    "commands": [
+        {
+            "command_name": "sandbox-detect",
+            "help": "沙箱/虚拟机/调试器检测 - 移植自 Al-Khaser",
+            "long_help": "检测虚拟机(VMware/VirtualBox/Hyper-V/Parallels/QEMU/Xen)、沙箱(Sandboxie/Comodo/JoeBox)、调试工具(Wireshark/Dumpcap/HttpDebugger)，支持反调试(RDTSC时序检测)、环境伪装(进程名/命令行伪装)",
+            "files": [
+                {
+                    "os": "windows",
+                    "arch": "amd64",
+                    "path": "sandbox_detect.dll"
+                }
+            ],
+            "entrypoint": "go",
+            "depends_on": "",
+            "init": "",
+            "arguments": []
+        }
+    ]
+}

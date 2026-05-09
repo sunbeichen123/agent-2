@@ -150,7 +150,8 @@ func GarbleCmd(config GoConfig, cwd string, command []string) ([]byte, error) {
 	cmd := exec.Command(garbleBinPath, command...)
 	cmd.Dir = cwd
 	cmd.Env = buildCommandEnv(config, map[string]string{
-		"GOGARBLE": config.GOGARBLE,
+		"GOGARBLE":    config.GOGARBLE,
+		"GOTOOLCHAIN": "local",
 	})
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
@@ -211,6 +212,7 @@ func GoBuild(config GoConfig, src string, dest string, buildmode string, tags []
 
 	goCommand = append(goCommand, "-trimpath") // remove absolute paths from any compiled binary
 	goCommand = append(goCommand, "-mod=vendor")
+	goCommand = append(goCommand, "-buildvcs=false")
 
 	if 0 < len(tags) {
 		goCommand = append(goCommand, "-tags")
