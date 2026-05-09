@@ -1,4 +1,4 @@
-// Copyright (c) Tailscale Inc & AUTHORS
+// Copyright (c) Tailscale Inc & contributors
 // SPDX-License-Identifier: BSD-3-Clause
 
 // Package tsdial provides a Dialer type that can dial out of tailscaled.
@@ -264,7 +264,7 @@ var (
 
 func (d *Dialer) linkChanged(delta *netmon.ChangeDelta) {
 	// Track how often we see ChangeDeltas with no DefaultRouteInterface.
-	if delta.New.DefaultRouteInterface == "" {
+	if delta.DefaultRouteInterface == "" {
 		metricChangeDeltaNoDefaultRoute.Add(1)
 	}
 
@@ -294,22 +294,23 @@ func changeAffectsConn(delta *netmon.ChangeDelta, conn net.Conn) bool {
 	}
 	lip, rip := la.AddrPort().Addr(), ra.AddrPort().Addr()
 
-	if delta.Old == nil {
+	if delta.IsInitialState {
 		return false
 	}
-	if delta.Old.DefaultRouteInterface != delta.New.DefaultRouteInterface ||
-		delta.Old.HTTPProxy != delta.New.HTTPProxy {
+
+	if delta.DefaultInterfaceChanged ||
+		delta.HasPACOrProxyConfigChanged {
 		return true
 	}
 
 	// In a few cases, we don't have a new DefaultRouteInterface (e.g. on
-	// Android; see tailscale/corp#19124); if so, pessimistically assume
+	// Android and macOS/iOS; see tailscale/corp#19124); if so, pessimistically assume
 	// that all connections are affected.
-	if delta.New.DefaultRouteInterface == "" && runtime.GOOS != "plan9" {
+	if delta.DefaultRouteInterface == "" && runtime.GOOS != "plan9" {
 		return true
 	}
 
-	if !delta.New.HasIP(lip) && delta.Old.HasIP(lip) {
+	if delta.InterfaceIPDisappeared(lip) {
 		// Our interface with this source IP went away.
 		return true
 	}
@@ -512,6 +513,33 @@ func (d *Dialer) UserDial(ctx context.Context, network, addr string) (net.Conn, 
 	// TODO(bradfitz): netns, etc
 	var stdDialer net.Dialer
 	return stdDialer.DialContext(ctx, network, ipp.String())
+}
+
+// UserDialPlan resolves addr and reports whether the dialer would
+// handle it via Tailscale. If viaTailscale is false, the resolved
+// address is not a Tailscale route and the caller may dial it directly.
+//
+// Warning: there is a TOCTOU race if addr contains a DNS name and the
+// caller subsequently passes the same DNS name to [Dialer.UserDial], as DNS
+// may resolve differently the second time. Callers who want to only
+// dial over Tailscale should call [Dialer.UserDial] with the returned
+// ipp.String() (an IP:port) rather than the original DNS name.
+func (d *Dialer) UserDialPlan(ctx context.Context, network, addr string) (ipp netip.AddrPort, viaTailscale bool, err error) {
+	ipp, err = d.userDialResolve(ctx, network, addr)
+	if err != nil {
+		return netip.AddrPort{}, false, err
+	}
+	if d.UseNetstackForIP != nil && d.UseNetstackForIP(ipp.Addr()) {
+		return ipp, true, nil
+	}
+	if routes := d.routes.Load(); routes != nil {
+		isTailscaleRoute, _ := routes.Lookup(ipp.Addr())
+		return ipp, isTailscaleRoute, nil
+	}
+	if version.IsMacGUIVariant() && tsaddr.IsTailscaleIP(ipp.Addr()) {
+		return ipp, true, nil
+	}
+	return ipp, false, nil
 }
 
 // dialPeerAPI connects to a Tailscale peer's peerapi over TCP.
