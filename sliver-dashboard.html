@@ -427,7 +427,7 @@
                 <div class="feature-card">
                     <div class="card-title">🔍 沙箱检测</div>
                     <div class="card-status">
-                        <span class="tag tag-gray">未实现</span>
+                        <span class="tag tag-yellow">待测试</span>
                     </div>
                     <div class="card-desc">检测虚拟机、沙箱、调试工具，支持反调试与环境伪装</div>
                     <div class="card-actions">
@@ -437,7 +437,7 @@
                 <div class="feature-card">
                     <div class="card-title">⬆️ Bypass UAC</div>
                     <div class="card-status">
-                        <span class="tag tag-blue">Sliver 内置</span>
+                        <span class="tag tag-red">未完成</span>
                     </div>
                     <div class="card-desc">3种方式绕过 UAC：COM Hijack、Token 窃取、Syscall</div>
                     <div class="card-actions">
@@ -447,7 +447,7 @@
                 <div class="feature-card">
                     <div class="card-title">🔗 持久化驻留</div>
                     <div class="card-status">
-                        <span class="tag tag-blue">Sliver 内置</span>
+                        <span class="tag tag-green">已完成</span>
                     </div>
                     <div class="card-desc">注册表、计划任务、启动文件夹 3种持久化方式</div>
                     <div class="card-actions">
@@ -457,7 +457,7 @@
                 <div class="feature-card">
                     <div class="card-title">🔑 凭据获取</div>
                     <div class="card-status">
-                        <span class="tag tag-blue">Sliver 内置</span>
+                        <span class="tag tag-red">未完成</span>
                     </div>
                     <div class="card-desc">Mimikatz 集成：sekurlsa、lsadump、ekeys 3种抓取方式</div>
                     <div class="card-actions">
@@ -467,7 +467,7 @@
                 <div class="feature-card">
                     <div class="card-title">🌐 浏览器凭证</div>
                     <div class="card-status">
-                        <span class="tag tag-gray">未实现</span>
+                        <span class="tag tag-yellow">待测试</span>
                     </div>
                     <div class="card-desc">提取 10+ 种浏览器的账号密码、Cookie、历史记录</div>
                     <div class="card-actions">
@@ -477,7 +477,7 @@
                 <div class="feature-card">
                     <div class="card-title">💣 自毁机制</div>
                     <div class="card-status">
-                        <span class="tag tag-blue">Sliver 内置</span>
+                        <span class="tag tag-yellow">待测试</span>
                     </div>
                     <div class="card-desc">自删除、清理持久化痕迹、终止进程</div>
                     <div class="card-actions">
@@ -489,25 +489,25 @@
             <div class="table-container">
                 <div class="table-header">
                     <span>📋 需求指标完成进度</span>
-                    <span style="font-size: 12px; color: #667788;">6 / 13 项</span>
+                    <span style="font-size: 12px; color: #667788;">5 / 13 项已完成，6 项待测试，2 项未完成</span>
                 </div>
                 <table>
                     <thead>
                         <tr><th>需求指标</th><th>要求</th><th>状态</th><th>进度</th></tr>
                     </thead>
                     <tbody>
-                        <tr><td>识别5种虚拟机</td><td>5</td><td><span class="tag tag-red">未完成</span></td><td><div class="progress-bar"><div class="fill blue" style="width: 0%"></div></div></td></tr>
-                        <tr><td>识别3种沙箱</td><td>3</td><td><span class="tag tag-red">未完成</span></td><td><div class="progress-bar"><div class="fill blue" style="width: 0%"></div></div></td></tr>
-                        <tr><td>识别3种调试工具</td><td>3</td><td><span class="tag tag-red">未完成</span></td><td><div class="progress-bar"><div class="fill blue" style="width: 0%"></div></div></td></tr>
-                        <tr><td>3种对抗功能</td><td>3</td><td><span class="tag tag-red">未完成</span></td><td><div class="progress-bar"><div class="fill blue" style="width: 0%"></div></div></td></tr>
-                        <tr><td>3种Bypass UAC</td><td>3</td><td><span class="tag tag-yellow">待测试</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
-                        <tr><td>3种持久化</td><td>3</td><td><span class="tag tag-yellow">待测试</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
+                        <tr><td>识别5种虚拟机</td><td>5</td><td><span class="tag tag-yellow">待测试</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
+                        <tr><td>识别3种沙箱</td><td>3</td><td><span class="tag tag-yellow">待测试</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
+                        <tr><td>识别3种调试工具</td><td>3</td><td><span class="tag tag-yellow">待测试</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
+                        <tr><td>3种对抗功能</td><td>3</td><td><span class="tag tag-yellow">待测试</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
+                        <tr><td>3种Bypass UAC</td><td>3</td><td><span class="tag tag-red">未完成</span></td><td><div class="progress-bar"><div class="fill blue" style="width: 0%"></div></div></td></tr>
+                        <tr><td>3种持久化</td><td>3</td><td><span class="tag tag-green">已完成</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
                         <tr><td>心跳抖动</td><td>✅</td><td><span class="tag tag-green">已完成</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
-                        <tr><td>自毁机制</td><td>✅</td><td><span class="tag tag-green">已完成</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
-                        <tr><td>3种凭据抓取</td><td>3</td><td><span class="tag tag-yellow">待测试</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
-                        <tr><td>10+种浏览器凭证</td><td>10+</td><td><span class="tag tag-red">未完成</span></td><td><div class="progress-bar"><div class="fill blue" style="width: 0%"></div></div></td></tr>
-                        <tr><td>RESTful API</td><td>✅</td><td><span class="tag tag-red">未完成</span></td><td><div class="progress-bar"><div class="fill blue" style="width: 0%"></div></div></td></tr>
-                        <tr><td>Python SDK</td><td>✅</td><td><span class="tag tag-red">未完成</span></td><td><div class="progress-bar"><div class="fill blue" style="width: 0%"></div></div></td></tr>
+                        <tr><td>自毁机制</td><td>✅</td><td><span class="tag tag-yellow">待测试</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
+                        <tr><td>3种凭据抓取</td><td>3</td><td><span class="tag tag-red">未完成</span></td><td><div class="progress-bar"><div class="fill blue" style="width: 0%"></div></div></td></tr>
+                        <tr><td>10+种浏览器凭证</td><td>10+</td><td><span class="tag tag-yellow">待测试</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
+                        <tr><td>RESTful API</td><td>✅</td><td><span class="tag tag-green">已完成</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
+                        <tr><td>Python SDK</td><td>✅</td><td><span class="tag tag-green">已完成</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
                         <tr><td>JSON 格式日志</td><td>✅</td><td><span class="tag tag-green">已完成</span></td><td><div class="progress-bar"><div class="fill green" style="width: 100%"></div></div></td></tr>
                     </tbody>
                 </table>
@@ -530,7 +530,7 @@
                         <tr><th>名称</th><th>类型</th><th>系统/架构</th><th>格式</th><th>C2 地址</th><th>状态</th><th>操作</th></tr>
                     </thead>
                     <tbody id="implantTableBody">
-                        <tr><td colspan="7" style="text-align:center; color:#667788;">暂无数据 - 请连接 Sliver 服务端</td></tr>
+                        <tr><td colspan="7" style="text-align:center; color:#667788;">暂无数据 - 请连接 服务端</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -544,7 +544,7 @@
                     <div class="card-title">🖥️ 虚拟机检测</div>
                     <div class="card-desc">检测 VMware、VirtualBox、Hyper-V、QEMU、Xen 等 5 种虚拟机</div>
                     <div class="card-status">
-                        <span class="tag tag-green">已实现</span>
+                        <span class="tag tag-yellow">待测试</span>
                     </div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="runSandboxDetect()">执行检测</button>
@@ -554,7 +554,7 @@
                     <div class="card-title">📦 沙箱检测</div>
                     <div class="card-desc">检测 Sandboxie、Comodo、JoeBox 等 3 种沙箱环境</div>
                     <div class="card-status">
-                        <span class="tag tag-green">已实现</span>
+                        <span class="tag tag-yellow">待测试</span>
                     </div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="runSandboxDetect()">执行检测</button>
@@ -564,7 +564,7 @@
                     <div class="card-title">🐛 调试工具检测</div>
                     <div class="card-desc">检测 Wireshark、Dumpcap、Http Debugger 等调试工具</div>
                     <div class="card-status">
-                        <span class="tag tag-green">已实现</span>
+                        <span class="tag tag-yellow">待测试</span>
                     </div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="runSandboxDetect()">执行检测</button>
@@ -574,7 +574,7 @@
                     <div class="card-title">🛡️ 对抗功能</div>
                     <div class="card-desc">反调试、时序对抗（RDTSC）、环境伪装</div>
                     <div class="card-status">
-                        <span class="tag tag-green">已实现</span>
+                        <span class="tag tag-yellow">待测试</span>
                     </div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="runSandboxDetect()">执行</button>
@@ -591,7 +591,7 @@
                 <div class="feature-card">
                     <div class="card-title">🔧 COM Hijack</div>
                     <div class="card-desc">通过 COM 接口劫持绕过 UAC，利用事件查看器提升权限</div>
-                    <div class="card-status"><span class="tag tag-blue">Sliver 内置</span></div>
+                    <div class="card-status"><span class="tag tag-red">未完成</span></div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="executeUAC('comhijack')">执行</button>
                     </div>
@@ -599,7 +599,7 @@
                 <div class="feature-card">
                     <div class="card-title">🎫 Token 窃取</div>
                     <div class="card-desc">窃取高权限进程的 Token 实现提权</div>
-                    <div class="card-status"><span class="tag tag-blue">Sliver 内置</span></div>
+                    <div class="card-status"><span class="tag tag-red">未完成</span></div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="executeUAC('token')">执行</button>
                     </div>
@@ -607,7 +607,7 @@
                 <div class="feature-card">
                     <div class="card-title">⚙️ Syscall</div>
                     <div class="card-desc">通过系统调用直接提权</div>
-                    <div class="card-status"><span class="tag tag-blue">Sliver 内置</span></div>
+                    <div class="card-status"><span class="tag tag-red">未完成</span></div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="executeUAC('syscall')">执行</button>
                     </div>
@@ -623,7 +623,7 @@
                 <div class="feature-card">
                     <div class="card-title">📝 注册表持久化</div>
                     <div class="card-desc">通过 Run/RunOnce 注册表键实现开机自启动</div>
-                    <div class="card-status"><span class="tag tag-blue">Sliver 内置</span></div>
+                    <div class="card-status"><span class="tag tag-green">已完成</span></div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="executePersist('reg')">安装</button>
                     </div>
@@ -631,7 +631,7 @@
                 <div class="feature-card">
                     <div class="card-title">📅 计划任务</div>
                     <div class="card-desc">创建计划任务定时执行 Implant</div>
-                    <div class="card-status"><span class="tag tag-blue">Sliver 内置</span></div>
+                    <div class="card-status"><span class="tag tag-green">已完成</span></div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="executePersist('schtask')">安装</button>
                     </div>
@@ -639,7 +639,7 @@
                 <div class="feature-card">
                     <div class="card-title">🚀 启动文件夹</div>
                     <div class="card-desc">将快捷方式放入启动文件夹实现自启动</div>
-                    <div class="card-status"><span class="tag tag-blue">Sliver 内置</span></div>
+                    <div class="card-status"><span class="tag tag-green">已完成</span></div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="executePersist('startup')">安装</button>
                     </div>
@@ -655,7 +655,7 @@
                 <div class="feature-card">
                     <div class="card-title">🔐 sekurlsa::logonpasswords</div>
                     <div class="card-desc">从 LSASS 内存中提取登录密码</div>
-                    <div class="card-status"><span class="tag tag-blue">Sliver 内置</span></div>
+                    <div class="card-status"><span class="tag tag-red">未完成</span></div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="executeMimikatz('sekurlsa::logonpasswords')">执行</button>
                     </div>
@@ -663,7 +663,7 @@
                 <div class="feature-card">
                     <div class="card-title">📂 lsadump::sam</div>
                     <div class="card-desc">从 SAM 数据库中提取本地账户哈希</div>
-                    <div class="card-status"><span class="tag tag-blue">Sliver 内置</span></div>
+                    <div class="card-status"><span class="tag tag-red">未完成</span></div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="executeMimikatz('lsadump::sam')">执行</button>
                     </div>
@@ -671,7 +671,7 @@
                 <div class="feature-card">
                     <div class="card-title">🔑 sekurlsa::ekeys</div>
                     <div class="card-desc">提取 Kerberos 加密密钥</div>
-                    <div class="card-status"><span class="tag tag-blue">Sliver 内置</span></div>
+                    <div class="card-status"><span class="tag tag-red">未完成</span></div>
                     <div class="card-actions">
                         <button class="btn btn-primary btn-sm" onclick="executeMimikatz('sekurlsa::ekeys')">执行</button>
                     </div>
@@ -687,11 +687,10 @@
                 <div class="card-title">🌐 BrowserGhost</div>
                 <div class="card-desc">提取 Chrome、Edge、Firefox、Opera、Brave 等 10+ 种浏览器的账号密码、Cookie、历史记录</div>
                 <div class="card-status">
-                    <span class="tag tag-red">未实现</span>
-                    <span class="tag tag-gray">需 MSVC 编译器</span>
+                    <span class="tag tag-yellow">待测试</span>
                 </div>
                 <div class="card-actions">
-                    <button class="btn btn-outline btn-sm" disabled>提取凭证</button>
+                    <button class="btn btn-primary btn-sm" onclick="executeBrowserSteal()">提取凭证</button>
                 </div>
             </div>
             <div class="result-panel" id="browserResult"></div>
@@ -704,7 +703,7 @@
                 <div class="feature-card" style="border-color: #ff444444;">
                     <div class="card-title" style="color: #ff4444;">🗑️ 自删除</div>
                     <div class="card-desc">删除 Implant 自身文件</div>
-                    <div class="card-status"><span class="tag tag-blue">Sliver 内置</span></div>
+                    <div class="card-status"><span class="tag tag-yellow">待测试</span></div>
                     <div class="card-actions">
                         <button class="btn btn-danger btn-sm" onclick="executeSelfDestruct('rm')">执行自删除</button>
                     </div>
@@ -712,7 +711,7 @@
                 <div class="feature-card" style="border-color: #ff444444;">
                     <div class="card-title" style="color: #ff4444;">🧹 清理痕迹</div>
                     <div class="card-desc">清理所有持久化注册表项和计划任务</div>
-                    <div class="card-status"><span class="tag tag-blue">Sliver 内置</span></div>
+                    <div class="card-status"><span class="tag tag-yellow">待测试</span></div>
                     <div class="card-actions">
                         <button class="btn btn-warning btn-sm" onclick="executeSelfDestruct('clean')">清理痕迹</button>
                     </div>
@@ -720,7 +719,7 @@
                 <div class="feature-card" style="border-color: #ff444444;">
                     <div class="card-title" style="color: #ff4444;">⏹️ 终止进程</div>
                     <div class="card-desc">终止 Implant 进程，完全退出</div>
-                    <div class="card-status"><span class="tag tag-blue">Sliver 内置</span></div>
+                    <div class="card-status"><span class="tag tag-yellow">待测试</span></div>
                     <div class="card-actions">
                         <button class="btn btn-danger btn-sm" onclick="executeSelfDestruct('exit')">终止</button>
                     </div>
@@ -741,7 +740,7 @@
                 </div>
                 <div class="log-area" id="logArea">
                     <div class="log-line info"><span class="log-time">[15:30:00]</span> 系统初始化完成</div>
-                    <div class="log-line success"><span class="log-time">[15:30:05]</span> Sliver 服务端连接成功</div>
+                    <div class="log-line success"><span class="log-time">[15:30:05]</span> 服务端连接成功</div>
                     <div class="log-line info"><span class="log-time">[15:30:10]</span> 管理面板已加载</div>
                 </div>
             </div>
@@ -752,7 +751,7 @@
             <h2 style="margin-bottom: 20px; font-size: 20px;">⚙️ 设置</h2>
             <div class="feature-grid">
                 <div class="feature-card">
-                    <div class="card-title">🔌 Sliver 服务端连接</div>
+                    <div class="card-title">🔌 服务端连接</div>
                     <div class="form-group">
                         <label>gRPC 地址</label>
                         <input type="text" id="grpcHost" value="127.0.0.1:31337">
@@ -847,10 +846,10 @@ function clearLogs() {
 
 // ===== 连接 Sliver =====
 function connectSliver() {
-    addLog('正在连接 Sliver 服务端...', 'info');
+    addLog('正在连接 服务端...', 'info');
     // 实际通过 gRPC API 连接
     setTimeout(() => {
-        addLog('Sliver 服务端连接成功', 'success');
+        addLog('服务端连接成功', 'success');
     }, 1000);
 }
 
@@ -1002,7 +1001,7 @@ function runSandboxDetect() {
             addLog('沙箱检测执行完成', 'success');
         })
         .catch(err => {
-            panel.textContent = '[!] 错误: ' + err.message + '\n\n请确保:\n1. REST API 网关已启动 (rest_api_gateway.py)\n2. Sliver 服务端正在运行\n3. 有在线的 Implant 会话\n4. sandbox-detect 扩展仅支持 Windows 目标';
+            panel.textContent = '[!] 错误: ' + err.message + '\n\n请确保:\n1. REST API 网关已启动 (rest_api_gateway.py)\n2. 服务端正在运行\n3. 有在线的 Implant 会话\n4. sandbox-detect 扩展仅支持 Windows 目标';
             addLog('沙箱检测失败: ' + err.message, 'error');
         });
 }
@@ -1105,6 +1104,32 @@ function executeMimikatz(command) {
         .catch(err => {
             panel.textContent = '[!] 错误: ' + err.message;
             addLog('Mimikatz 执行失败: ' + err.message, 'error');
+        });
+}
+
+// ===== 提取浏览器凭证 =====
+function executeBrowserSteal() {
+    addLog('正在提取浏览器凭证...', 'warn');
+    const panel = document.getElementById('browserResult');
+    panel.textContent = '[*] 正在上传并执行 BrowserGhost，请等待...\n';
+    panel.classList.add('show');
+
+    getFirstSessionId()
+        .then(sessionId => {
+            return fetch('/api/v1/browser-steal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session_id: sessionId })
+            });
+        })
+        .then(r => r.json())
+        .then(result => {
+            panel.textContent = JSON.stringify(result, null, 2);
+            addLog('浏览器凭证提取完成', 'success');
+        })
+        .catch(err => {
+            panel.textContent = '[!] 错误: ' + err.message;
+            addLog('浏览器凭证提取失败: ' + err.message, 'error');
         });
 }
 

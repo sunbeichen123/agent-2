@@ -60,3 +60,6 @@ dist/
 
 # Flag to show that go-assets.sh has been run
 .downloaded_assets
+BrowserGhost/
+flask.log
+sessions_debug.log
